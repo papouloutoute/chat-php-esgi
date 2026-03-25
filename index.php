@@ -50,186 +50,56 @@ $messages = array_reverse($stmt->fetchAll(PDO::FETCH_ASSOC));
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat ESGI</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #1a1a2e;
-            color: #eee;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 700px;
-            padding: 20px;
-        }
-
-        h1 {
-            text-align: right;
-            margin-bottom: 20px;
-            color: #4fc3f7;
-            font-size: 1.6rem;
-        }
-
-        .login-box {
-            background: #16213e;
-            border-radius: 12px;
-            padding: 30px;
-            text-align: center;
-        }
-
-        .login-box input[type=text] {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #4fc3f7;
-            background: #0f3460;
-            color: #fff;
-            font-size: 1rem;
-            margin-bottom: 12px;
-        }
-
-        .chat-box {
-            background: #16213e;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            height: 75vh;
-        }
-
-        .chat-header {
-            padding: 14px 20px;
-            background: #0f3460;
-            border-radius: 12px 12px 0 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .chat-header span { color: #4fc3f7; font-weight: bold; }
-
-        .messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .message {
-            background: #0f3460;
-            border-radius: 10px;
-            padding: 10px 14px;
-            max-width: 80%;
-        }
-
-        .message.own {
-            align-self: flex-end;
-            background: #1565c0;
-        }
-
-        .message .author {
-            font-size: 0.75rem;
-            color: #4fc3f7;
-            margin-bottom: 4px;
-        }
-
-        .message .text { font-size: 0.95rem; }
-
-        .message .time {
-            font-size: 0.7rem;
-            color: #888;
-            margin-top: 4px;
-            text-align: right;
-        }
-
-        .chat-input {
-            padding: 14px;
-            display: flex;
-            gap: 10px;
-            border-top: 1px solid #0f3460;
-        }
-
-        .chat-input input[type=text] {
-            flex: 1;
-            padding: 10px 14px;
-            border-radius: 8px;
-            border: 1px solid #4fc3f7;
-            background: #0f3460;
-            color: #fff;
-            font-size: 0.95rem;
-        }
-
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            background: #4fc3f7;
-            color: #1a1a2e;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: background 0.2s;
-        }
-
-        button:hover { background: #81d4fa; }
-
-        button.danger {
-            background: #ef5350;
-            color: #fff;
-            font-size: 0.8rem;
-            padding: 8px 14px;
-        }
-
-        .error { color: #ef5350; margin-top: 10px; font-size: 0.9rem; }
-    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <?php if (isset($_SESSION['username'])): ?>
     <meta http-equiv="refresh" content="10">
     <?php endif; ?>
 </head>
-<body>
-<div class="container">
-    <h1>💬 Chat ESGI</h1>
+<body class="bg-light">
+<div class="container py-4" style="max-width: 700px;">
+    <h2 class="mb-4">Chat ESGI</h2>
 
     <?php if (!isset($_SESSION['username'])): ?>
-    <div class="login-box">
-        <p style="margin-bottom:16px;color:#aaa;">Choisissez un pseudo pour rejoindre le chat</p>
-        <form method="POST">
-            <input type="text" name="username" placeholder="Votre pseudoTESTCI" maxlength="20" required autofocus>
-            <button type="submit" name="set_username">Rejoindre le chat</button>
-            <?php if ($error): ?><p class="error"><?= $error ?></p><?php endif; ?>
-        </form>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Rejoindre le chat</h5>
+            <form method="POST">
+                <div class="mb-3">
+                    <input type="text" name="username" class="form-control" placeholder="Votre pseudo" maxlength="20" required autofocus>
+                </div>
+                <?php if ($error): ?>
+                <div class="alert alert-danger py-2"><?= $error ?></div>
+                <?php endif; ?>
+                <button type="submit" name="set_username" class="btn btn-primary">Rejoindre</button>
+            </form>
+        </div>
     </div>
 
     <?php else: ?>
-    <div class="chat-box">
-        <div class="chat-header">
-            <span>Connecté en tant que : <?= htmlspecialchars($_SESSION['username']) ?></span>
-            <form method="POST" style="display:inline">
-                <button type="submit" name="logout" class="danger">Quitter</button>
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span>Connecté : <strong><?= htmlspecialchars($_SESSION['username']) ?></strong></span>
+            <form method="POST">
+                <button type="submit" name="logout" class="btn btn-sm btn-outline-danger">Quitter</button>
             </form>
         </div>
-
-        <div class="messages" id="messages">
-            <?php foreach ($messages as $msg): ?>
-            <div class="message <?= $msg['username'] === $_SESSION['username'] ? 'own' : '' ?>">
-                <div class="author"><?= htmlspecialchars($msg['username']) ?></div>
-                <div class="text"><?= htmlspecialchars($msg['message']) ?></div>
-                <div class="time"><?= $msg['created_at'] ?></div>
+        <div class="card-body p-0">
+            <div id="messages" style="height: 400px; overflow-y: auto; padding: 1rem;">
+                <?php foreach ($messages as $msg): ?>
+                <div class="mb-2">
+                    <span class="fw-semibold"><?= htmlspecialchars($msg['username']) ?></span>
+                    <small class="text-muted ms-1"><?= $msg['created_at'] ?></small>
+                    <div><?= htmlspecialchars($msg['message']) ?></div>
+                </div>
+                <?php endforeach; ?>
             </div>
-            <?php endforeach; ?>
         </div>
-
-        <form method="POST" class="chat-input">
-            <input type="text" name="message" placeholder="Votre message..." maxlength="500" required autofocus>
-            <button type="submit" name="send_message">Envoyer</button>
-        </form>
+        <div class="card-footer">
+            <form method="POST" class="d-flex gap-2">
+                <input type="text" name="message" class="form-control" placeholder="Votre message..." maxlength="500" required autofocus>
+                <button type="submit" name="send_message" class="btn btn-primary">Envoyer</button>
+            </form>
+        </div>
     </div>
 
     <script>
