@@ -70,7 +70,7 @@ $messages = array_reverse($stmt->fetchAll(PDO::FETCH_ASSOC));
         }
 
         h1 {
-            text-align: center;
+            text-align: right;
             margin-bottom: 20px;
             color: #4fc3f7;
             font-size: 1.6rem;
