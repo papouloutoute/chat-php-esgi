@@ -201,7 +201,7 @@ $messages = array_reverse($stmt->fetchAll(PDO::FETCH_ASSOC));
     <div class="login-box">
         <p style="margin-bottom:16px;color:#aaa;">Choisissez un pseudo pour rejoindre le chat</p>
         <form method="POST">
-            <input type="text" name="username" placeholder="Votre pseudo" maxlength="20" required autofocus>
+            <input type="text" name="username" placeholder="Votre pseudoOOOO" maxlength="20" required autofocus>
             <button type="submit" name="set_username">Rejoindre le chat</button>
             <?php if ($error): ?><p class="error"><?= $error ?></p><?php endif; ?>
         </form>
