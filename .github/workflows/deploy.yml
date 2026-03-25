@@ -1,0 +1,17 @@
+name: Deploy to Coolify
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Coolify deployment
+        run: |
+          curl -X POST \
+            "http://coolify.julian.courses.studalya.net/api/v1/deploy?uuid=fwg60p1oh34vu3464t8kixyx&force=false" \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_DEPLOY_TOKEN }}" \
+            -H "Content-Type: application/json"
